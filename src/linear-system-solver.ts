@@ -2,6 +2,11 @@ import { scalingByGaussianElimination } from './utils/matrices-utils';
 import { LinearSystem } from './models/linear-system';
 
 export class LinearSystemSolver {
+  /**
+   * Solve a linear system by Gaussian elimination method with parcial pivoting
+   * @param system Linear system
+   * @returns System exact solution vector
+   */
   solveByGaussianElimination(system: LinearSystem): number[] {
     const scaledMatrix = scalingByGaussianElimination(system.expandedMatrix);
     const n = scaledMatrix.length;
@@ -28,8 +33,14 @@ export class LinearSystemSolver {
   solveByGaussSeidelMethod(system: LinearSystem): number[]{
     return [];
   }
-
-  test(system: LinearSystem, solution: number[]): boolean {
+  /**
+   * Tests whether a solution satisfies the given linear system
+   * @param system Linear system under test
+   * @param solution Possible solution
+   * @param desiredPrecision Desired decimal precision, e.g: 1e-6
+   * @returns True if absolute error of each entry in the solution array is less than the desired precision
+   */
+  test(system: LinearSystem, solution: number[], desiredPrecision: number): boolean {
     const toSumOfTerms = (term1: number, term2: number) => term1 + term2;
     const toOperationResult = ({ a, x }: { a: number; x: number }) => a * x;
     const toCoefficientAndVariablePair = (coef: number, idx: number) => ({
@@ -42,10 +53,9 @@ export class LinearSystemSolver {
         const equationSolution = solution[eqIdx];
         const equationResult = equation.map(toCoefficientAndVariablePair).map(toOperationResult).reduce(toSumOfTerms);
 
-        // const absoluteError = Math.abs(1-0.9999999999999996);
-        // const sameOrder = absoluteError / 1e-16 < 10
-        return equationResult === equationSolution;
+        const absoluteError = Math.abs(equationSolution - equationResult);
+        return absoluteError;
       })
-      .some((solutionIsTrue) => !solutionIsTrue);
+      .every((absoluteError) => absoluteError <= desiredPrecision);
   }
 }

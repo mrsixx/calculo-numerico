@@ -28,7 +28,7 @@ test('integer-4-x-4-system-solve', () => {
 });
 
 test('simple-4x4-system-test', () => {
-  expect(linearSystemSolver.test(integer4x4System, integer4x4Solution)).toBeTruthy();
+  expect(linearSystemSolver.test(integer4x4System, integer4x4Solution, 1e-6)).toBeTruthy();
 });
 
 test('decimal-4x4-system-solve', () => {
@@ -36,5 +36,5 @@ test('decimal-4x4-system-solve', () => {
 });
 
 test('decimal-4x4-system-test', () => {
-  expect(linearSystemSolver.test(decimal4x4System, decimal4x4Solution)).toBeTruthy();
+  expect(linearSystemSolver.test(decimal4x4System, decimal4x4Solution, 1e-6)).toBeTruthy();
 });
