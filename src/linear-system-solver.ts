@@ -2,7 +2,7 @@ import { scalingByGaussianElimination } from './utils/matrices-utils';
 import { LinearSystem } from './models/linear-system';
 
 export class LinearSystemSolver {
-  solve(system: LinearSystem): number[] {
+  solveByGaussianElimination(system: LinearSystem): number[] {
     const scaledMatrix = scalingByGaussianElimination(system.expandedMatrix);
     const n = scaledMatrix.length;
     const solution = new Array(n).fill(0);
@@ -19,6 +19,14 @@ export class LinearSystemSolver {
       solution[k] = (matrixB[k] - sum) / matrixA[k][k];
     }
     return solution;
+  }
+  
+  solveByJacobiMethod (system: LinearSystem): number[]{
+    return [];
+  }
+
+  solveByGaussSeidelMethod(system: LinearSystem): number[]{
+    return [];
   }
 
   test(system: LinearSystem, solution: number[]): boolean {
