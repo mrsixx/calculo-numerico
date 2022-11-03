@@ -23,18 +23,21 @@ const decimal4x4Results = [16.4, -49.7, -80.8, -106.3];
 const decimal4x4Solution = [1, 2, -1, 1];
 const decimal4x4System = new LinearSystem(decimal4x4Coefs, decimal4x4Results);
 
-test('integer-4-x-4-system-solveByGaussianElimination', () => {
-  expect(linearSystemSolver.solveByGaussianElimination(integer4x4System)).toEqual(integer4x4Solution);
+
+test('integer-4-x-4-system-solve-by-gaussian-elimination', () => {
+  const solutionTest = linearSystemSolver.solveByGaussianElimination(integer4x4System);
+  expect(linearSystemSolver.test(integer4x4System, solutionTest, 1e-16)).toBe(true);
 });
 
-test('simple-4x4-system-test', () => {
-  expect(linearSystemSolver.test(integer4x4System, integer4x4Solution, 1e-6)).toBeTruthy();
+test('simple-4x4-system-test', () => { 
+  expect(linearSystemSolver.test(integer4x4System, integer4x4Solution, 1e-16)).toBe(true);
 });
 
-test('decimal-4x4-system-solveByGaussianElimination', () => {
-  expect(linearSystemSolver.solveByGaussianElimination(decimal4x4System)).toEqual(decimal4x4Solution);
+test('decimal-4x4-system-solve-by-gaussian-elimination', () => {
+  const solutionTest = linearSystemSolver.solveByGaussianElimination(decimal4x4System);
+  expect(linearSystemSolver.test(decimal4x4System, solutionTest, 1e-6)).toBe(true);
 });
 
 test('decimal-4x4-system-test', () => {
-  expect(linearSystemSolver.test(decimal4x4System, decimal4x4Solution, 1e-6)).toBeTruthy();
+  expect(linearSystemSolver.test(decimal4x4System, decimal4x4Solution, 1e-6)).toBe(true);
 });

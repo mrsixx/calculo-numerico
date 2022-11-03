@@ -1,3 +1,5 @@
+import { sum as vectorSum } from './math-utils';
+
 // elementar operations
 const multiplyRowByScalar = (linha: number[], escalar: number): number[] => {
   return linha.map((x) => x * escalar);
@@ -31,4 +33,10 @@ export function scalingByGaussianElimination(expandedMatrix: number[][]): number
     }
     return row;
   });
+}
+
+export function isSquareMatrix(matrix: number[][]) : boolean {
+  const rowsLength = matrix.length;
+  const cellsLength = vectorSum(matrix.map(row => row.length));
+  return cellsLength / rowsLength === rowsLength;
 }
