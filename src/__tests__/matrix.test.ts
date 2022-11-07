@@ -1,16 +1,10 @@
+import { 
+  colMatrix, identity4x4Array, malFormedArray, 
+  nonSquareMatrix, nonSquareZeroArray, rowMatrix, 
+  squareMatrixWhatever, squareMatrixWhateverInverseArray, 
+  squareMatrixWhateverTransposeArray, nonSquareMatrixTransposeArray 
+} from '../utils/tests-constants/matrices';
 import { Matrix } from '../models/matrix';
-
-const rowMatrix = Matrix.from([[1,2,3]]);
-const colMatrix = Matrix.from([[1],[2],[3]]);
-const nonSquareMatrix = Matrix.from([[2, 3, 4, 5], [6, 7, 8, 0]]);
-const squareMatrixWhatever = Matrix.from([[1, 2, 3, 4], [5, 6, 7, 9], [9, 8, 7, 6], [5, 4, 3, 2]]);
-const squareMatrixWhateverInverseArray = [[1, 2, 3, 4], [5, 6, 7, 9], [9, 8, 7, 6], [5, 4, 3, 2]];
-const nonSquareMatrixTransposeArray = [[2, 6], [3, 7], [4, 8], [5, 0]];
-const squareMatrixWhateverTransposeArray = [[1, 5, 9, 5], [2, 6, 8, 4], [3, 7, 7, 3], [4, 9, 6, 2]];
-const identity4x4Array = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
-const malFormedArray = [[0, 0, 1], [2, 3, 4, 5], [0, 1, 3], [1, 2, 3, 4, 5, 6, 7, 8, 9]];
-const nonSquareZeroArray = [[0,0]];
-
 
 test('try-create-mal-formed-matrix', () => {
   expect(() => {
@@ -74,7 +68,8 @@ test('inverse-matrix', () => {
     const _ = nonSquareMatrix.inverse();
   }).toThrowError('Non-square matrices do not have an inverse.');
 
-  // TODO: get inverse of a square matrix
+  const inverseMatrix = squareMatrixWhatever.inverse();
+  expect(inverseMatrix.entries).toEqual(squareMatrixWhateverInverseArray);
 })
 
 test('transpose-matrix', () => {
