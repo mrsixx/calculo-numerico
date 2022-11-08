@@ -2,9 +2,12 @@ import {
   colMatrix, identity4x4Array, malFormedArray, 
   nonSquareMatrix, nonSquareZeroArray, rowMatrix, 
   squareMatrixWhatever, squareMatrixWhateverInverseArray, 
-  squareMatrixWhateverTransposeArray, nonSquareMatrixTransposeArray 
+  squareMatrixWhateverTransposeArray, nonSquareMatrixTransposeArray, nonSquareMatrixArray 
 } from '../utils/tests-constants/matrices';
 import { Matrix } from '../models/matrix';
+import { InverseMatrixService } from '../services/inverse-matrix-service';
+
+const getInverseMatrixService = () => new InverseMatrixService();
 
 test('try-create-mal-formed-matrix', () => {
   expect(() => {
@@ -63,15 +66,6 @@ test('matrix-shape', () => {
   expect(nonSquareMatrix.isSquare).toBe(false);
 });
 
-test('inverse-matrix', () => {
-  expect(() => {
-    const _ = nonSquareMatrix.inverse();
-  }).toThrowError('Non-square matrices do not have an inverse.');
-
-  const inverseMatrix = squareMatrixWhatever.inverse();
-  expect(inverseMatrix.entries).toEqual(squareMatrixWhateverInverseArray);
-})
-
 test('transpose-matrix', () => {
   const squareTranspose = squareMatrixWhatever.transpose();
   const nonSquareTranspose = nonSquareMatrix.transpose();
@@ -81,4 +75,39 @@ test('transpose-matrix', () => {
   
   expect(squareTranspose.order).toEqual('4x4');
   expect(squareTranspose.entries).toEqual(squareMatrixWhateverTransposeArray)
+})
+
+test('set-col', () => {
+  // nonSquareMatrix order is 2x4
+  const setColSizeErrorString = 'Entries must have the same row length as the matrix';
+  expect(() => {
+    nonSquareMatrix.setCol([], 0);
+  }).toThrowError(setColSizeErrorString);
+
+  expect(() => {
+    nonSquareMatrix.setCol([1,2,3,4,5], 0);
+  }).toThrowError(setColSizeErrorString);
+
+  const nonSquareMatrixTmp = Matrix.from(nonSquareMatrix.entries);
+  console.log('Antes', nonSquareMatrixTmp)
+  const nonSquareFirstCol = nonSquareMatrixTmp.getCol(0) as number[];
+  nonSquareMatrixTmp.setCol(nonSquareFirstCol.reverse(), 0);
+  console.log('Depois', nonSquareMatrixTmp)
+  expect(nonSquareMatrixTmp.getCol(0)).toEqual(nonSquareFirstCol.reverse());
+  
+  const squareMatrixTmp = Matrix.from(squareMatrixWhatever.entries);
+  const squareFirstCol = squareMatrixTmp.getCol(3) as number[];
+  squareMatrixTmp.setCol(squareFirstCol.reverse(), 3);
+  expect(squareMatrixTmp.getCol(3)).toEqual(squareFirstCol.reverse());
+})
+
+test('inverse-matrix', () => {
+  const service = getInverseMatrixService();
+
+  expect(() => {
+    const _ = service.inverse(nonSquareMatrix);
+  }).toThrowError('Non-square matrices do not have an inverse.');
+
+  // const inverseMatrix = service.inverse(squareMatrixWhatever);
+  // expect(inverseMatrix.entries).toEqual(squareMatrixWhateverInverseArray);
 })

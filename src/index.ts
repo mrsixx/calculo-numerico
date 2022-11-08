@@ -1,4 +1,4 @@
 export { LinearSystem } from "./models/linear-system";
-export { GaussianElimination } from "./services/gaussian-elimination";
-export { GaussSeidelMethod } from "./services/gauss-seidel-method";
-export { JacobiMethod } from "./services/jacoby-method";
+export { GaussianEliminationService } from "./services/gaussian-elimination-service";
+export { GaussSeidelMethodService } from "./services/gauss-seidel-method-service";
+export { JacobiMethodService } from "./services/jacoby-method-service";

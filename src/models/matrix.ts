@@ -49,6 +49,15 @@ export class Matrix {
     return this.entries[row];
   } 
 
+  setCol(entries: number[], colIndex: number): void {
+    if(entries.length != this.rows)
+      throw new Error('Entries must have the same row length as the matrix');
+      
+    for(let i = 0; i < this.rows; i++){
+      this._entries[i][colIndex] = entries[i];
+    }
+  }
+
   getEntry(row: number, col: number): number {
     if(row >= this.rows)
       throw new Error(`Row index '${row}' not available.`)
@@ -62,13 +71,6 @@ export class Matrix {
     this._entries[row][col] = entry;
   }
 
-  inverse() : Matrix {
-    if(!this.isSquare)
-      throw new Error('Non-square matrices do not have an inverse.');
-
-    return Matrix.from(this._entries);
-  }
-
   transpose(): Matrix {
     const transposeMatrix = Matrix.zero(this.cols, this.rows);
     for(let i = 0; i < this.rows; i++){
@@ -79,8 +81,17 @@ export class Matrix {
     return transposeMatrix;
   }
 
-  static from(array: number[][]): Matrix {
-    return new Matrix(array);
+  forEachRow(callbackFn: (row: number[], index: number, array: number[][]) => void, thisArg?: any) : void {
+    this._entries.forEach(callbackFn)
+  }
+
+  forEachCol(callbackFn: (col: number[], index: number, array: number[][]) => void, thisArg?: any) : void {
+    this.transpose().forEachRow(callbackFn)
+  }
+
+
+  static from(array: ReadonlyArray<ReadonlyArray<number>>): Matrix {
+    return new Matrix(array as number[][]);
   }
 
   static zero(rows: number, cols: number): Matrix {

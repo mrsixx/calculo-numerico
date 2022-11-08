@@ -2,7 +2,7 @@ import { ExactLinearSystemSolver } from "../models/linear-system-solver"
 import { LinearSystem } from "../models/linear-system";
 import { scalingByGaussianElimination } from "../utils/matrices-utils";
 
-export class GaussianElimination extends ExactLinearSystemSolver {
+export class GaussianEliminationService extends ExactLinearSystemSolver {
   
   /**
    * Solve a linear system by Gaussian elimination method with parcial pivoting

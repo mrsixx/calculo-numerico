@@ -1,7 +1,7 @@
-import { GaussianElimination } from '../services/gaussian-elimination';
+import { GaussianEliminationService } from '../services/gaussian-elimination-service';
 import { decimal4x4Solution, decimal4x4System, integer4x4Solution, integer4x4System } from '../utils/tests-constants/linear-systems';
 
-const linearSystemSolver = new GaussianElimination();
+const linearSystemSolver = new GaussianEliminationService();
 
 
 test('integer-4-x-4-system-solve-by-gaussian-elimination', () => {

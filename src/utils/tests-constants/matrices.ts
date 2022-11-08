@@ -2,7 +2,8 @@ import { Matrix } from "../../models/matrix";
 
 export const rowMatrix = Matrix.from([[1,2,3]]);
 export const colMatrix = Matrix.from([[1],[2],[3]]);
-export const nonSquareMatrix = Matrix.from([[2, 3, 4, 5], [6, 7, 8, 0]]);
+export const nonSquareMatrixArray = [[2, 3, 4, 5], [6, 7, 8, 0]];
+export const nonSquareMatrix = Matrix.from(nonSquareMatrixArray);
 export const squareMatrixWhatever = Matrix.from([[1, 2, 3, 4], [5, 6, 7, 9], [9, 8, 7, 6], [5, 4, 3, 2]]);
 export const squareMatrixWhateverInverseArray = [[1, 2, 3, 4], [5, 6, 7, 9], [9, 8, 7, 6], [5, 4, 3, 2]];
 export const nonSquareMatrixTransposeArray = [[2, 6], [3, 7], [4, 8], [5, 0]];
