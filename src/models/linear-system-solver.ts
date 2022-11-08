@@ -22,16 +22,18 @@ abstract class LinearSystemSolver {
       x: solutionTest[idx],
     });
 
-    const error = system.coefficientsMatrix
+    // console.log({coef: system.coefficientsMatrix.entries, results: system.resultsMatrix.entries});
+    const resultMatrix = system.resultsMatrix.getCol(0);
+    const error = system.coefficientsMatrix.entries
       .map((equation, eqIdx) => {
-        const realSolution = system.resultsMatrix[eqIdx];
+        const realSolution = resultMatrix[eqIdx];
+        // console.log(equation.map(toCoefficientAndVariablePair));
         const calculationResult = equation.map(toCoefficientAndVariablePair)
                                         .map(toOperationResult)
                                         .reduce(toSumOfTerms);
         const absoluteError = Math.abs(realSolution - calculationResult);
         return absoluteError;
       });
-      
       const errorNorm = vector2Norm(error);
       return  errorNorm <= desiredPrecision;
   }

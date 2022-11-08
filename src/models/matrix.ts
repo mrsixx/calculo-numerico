@@ -42,6 +42,15 @@ export class Matrix {
     return this.entries.map(row => row[col]);
   }
 
+  setCol(entries: number[], colIndex: number): void {
+    if(entries.length !== this.rows)
+      throw new Error('Entries must have the same row length as the matrix');
+      
+    for(let i = 0; i < this.rows; i++)
+      this.setEntry(i, colIndex, entries[i]);
+    
+  }
+
   getRow(row: number): ReadonlyArray<number> {
     if(row >= this.rows)
       throw new Error(`Row index '${row}' not available.`)
@@ -49,13 +58,11 @@ export class Matrix {
     return this.entries[row];
   } 
 
-  setCol(entries: number[], colIndex: number): void {
-    if(entries.length != this.rows)
-      throw new Error('Entries must have the same row length as the matrix');
-      
-    for(let i = 0; i < this.rows; i++){
-      this._entries[i][colIndex] = entries[i];
-    }
+  setRow(entries: number[], rowIndex: number): void {
+    if(entries.length !== this.cols)
+      throw new Error('Entries must have the same col length as the matrix');
+    for(let j = 0; j < this.cols; j++)
+      this.setEntry(rowIndex, j, entries[j]);
   }
 
   getEntry(row: number, col: number): number {
@@ -81,29 +88,66 @@ export class Matrix {
     return transposeMatrix;
   }
 
+  mapRows(callbackFn: (row: number[], index: number, array: number[][]) => unknown, thisArg?: any) : unknown[] {
+    return this._entries.map(callbackFn, thisArg);
+  }
+
   forEachRow(callbackFn: (row: number[], index: number, array: number[][]) => void, thisArg?: any) : void {
-    this._entries.forEach(callbackFn)
+    this._entries.forEach(callbackFn, thisArg)
   }
 
-  forEachCol(callbackFn: (col: number[], index: number, array: number[][]) => void, thisArg?: any) : void {
-    this.transpose().forEachRow(callbackFn)
+  forEachCol(callbackFn: (col: number[], index: number, array: number[][]) => void) : void {
+    for(let j = 0; j < this.cols; j++)
+    {
+      const col = this.entries.map(row => row[j]);
+      callbackFn(col, j, this.entries as number[][]);
+    }
   }
 
+  findRowIndex(predicate: (value: number[], index: number, obj: number[][]) => unknown, thisArg?: any): number {
+    return this._entries.findIndex(predicate, thisArg);
+  }
+
+  permuteRows(indexRowA: number, indexRowB: number) {
+    const isNotValidIndex = (index: number) : boolean => index < 0 || index >= this.rows;
+    [indexRowA, indexRowB].forEach(index => {
+      if(isNotValidIndex(index))
+        throw new Error(`Index '${index}' is not a valid index.`);
+    });
+
+    const rowA = [...this.getRow(indexRowA)];
+    const rowB = [...this.getRow(indexRowB)];
+    
+    this.setRow(rowB, indexRowA);
+    this.setRow(rowA, indexRowB);
+  }
+
+
+  print() : void {
+    console.log(this._entries.map(row => row.join(' ')).join('\n'));
+  }
 
   static from(array: ReadonlyArray<ReadonlyArray<number>>): Matrix {
-    return new Matrix(array as number[][]);
+    // TODO: must be a better way to do a deep copy like this!!!
+    const deepCopy: number[][] = JSON.parse(JSON.stringify(array));
+    return new Matrix(deepCopy);
   }
 
   static zero(rows: number, cols: number): Matrix {
     const zeroMatrix: number[][] = [];
 
-    for(let i = 0; i < rows; i++){
-      const row = new Array(cols).fill(0);
+    for(let i = 0; i < rows; i++) {
+      // const row = new Array(cols).fill(0);
+      const row: number[] = [];
+      for(let j = 0; j < cols; j++)
+        row.push(0);
+
       zeroMatrix.push(row);
     }
 
     return Matrix.from(zeroMatrix);
   }
+
   static identity(order: number) : Matrix {
     const identityMatrix: number[][] = [];
     for(let i = 0; i < order; i++) {
@@ -115,4 +159,5 @@ export class Matrix {
     }
     return Matrix.from(identityMatrix);
   }
+
 }

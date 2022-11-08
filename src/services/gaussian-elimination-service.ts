@@ -11,12 +11,12 @@ export class GaussianEliminationService extends ExactLinearSystemSolver {
    */
   solve(system: LinearSystem): number[] {
     const scaledMatrix = scalingByGaussianElimination(system.expandedMatrix);
-    const n = scaledMatrix.length;
+    const n = scaledMatrix.rows;
     const solution = new Array(n).fill(0);
 
     // AX = B
-    const matrixA = scaledMatrix.map((row) => row.slice(0, row.length - 1));
-    const matrixB = scaledMatrix.map((row) => row[row.length - 1]);
+    const matrixA = scaledMatrix.entries.map((row) => row.slice(0, row.length - 1));
+    const matrixB = scaledMatrix.entries.map((row) => row[row.length - 1]);
 
     // upper triangular matrix -> from last row to first
     for (let k = n - 1; k >= 0; k--) {

@@ -1,8 +1,7 @@
-import { 
-  colMatrix, identity4x4Array, malFormedArray, 
-  nonSquareMatrix, nonSquareZeroArray, rowMatrix, 
-  squareMatrixWhatever, squareMatrixWhateverInverseArray, 
-  squareMatrixWhateverTransposeArray, nonSquareMatrixTransposeArray, nonSquareMatrixArray 
+import {
+  malFormedArray, squareMatrixTransposeArray, nonSquareMatrixArray,
+  nonSquareMatrixTransposeArray, nonSquareZeroArray, identity4x4Array,
+  getColMatrix, getSquareMatrix, getNonSquareMatrix, getRowMatrix 
 } from '../utils/tests-constants/matrices';
 import { Matrix } from '../models/matrix';
 import { InverseMatrixService } from '../services/inverse-matrix-service';
@@ -29,57 +28,72 @@ test('4x4-identity-matrix', () => {
 });
 
 test('get-matrix-entry', () => {
-  expect(squareMatrixWhatever.getEntry(2, 3)).toEqual(6);
-  expect(squareMatrixWhatever.getEntry(0, 0)).toEqual(1);
-  expect(squareMatrixWhatever.getEntry(3, 3)).toEqual(2);
+  const squareMatrix = getSquareMatrix();
+
+  expect(squareMatrix.getEntry(2, 3)).toEqual(6);
+  expect(squareMatrix.getEntry(0, 0)).toEqual(1);
+  expect(squareMatrix.getEntry(3, 3)).toEqual(2);
   expect(() => {
-    squareMatrixWhatever.getEntry(4,0);
+    squareMatrix.getEntry(4,0);
   }).toThrowError(`Row index '4' not available.`);
   expect(() => {
-    squareMatrixWhatever.getEntry(0,100);
+    squareMatrix.getEntry(0,100);
   }).toThrowError(`Col index '100' not available.`);
 });
 
 test('get-matrix-row', () => {
-  expect(squareMatrixWhatever.getRow(2)).toEqual([9, 8, 7, 6]);
+  const squareMatrix = getSquareMatrix();
+
+  expect(squareMatrix.getRow(2)).toEqual([9, 8, 7, 6]);
   expect(() => {
-    squareMatrixWhatever.getRow(5);
+    squareMatrix.getRow(5);
   }).toThrowError(`Row index '5' not available.`);
 });
 
 test('get-matrix-col', () => {
-  expect(squareMatrixWhatever.getCol(2)).toEqual([3, 7, 7, 3]);
+  const squareMatrix = getSquareMatrix();
+  
+  expect(squareMatrix.getCol(2)).toEqual([3, 7, 7, 3]);
   expect(() => {
-    squareMatrixWhatever.getCol(32);
+    squareMatrix.getCol(32);
   }).toThrowError(`Col index '32' not available.`);
 });
 
 test('get-matrix-order', () => {
-  expect(squareMatrixWhatever.order).toEqual('4x4');
+  const rowMatrix = getRowMatrix();
+  const colMatrix = getColMatrix();
+  const squareMatrix = getSquareMatrix();
+  const nonSquareMatrix = getNonSquareMatrix();
+
+  expect(squareMatrix.order).toEqual('4x4');
   expect(nonSquareMatrix.order).toEqual('2x4');
   expect(rowMatrix.order).toEqual('1x3');
   expect(colMatrix.order).toEqual('3x1');
 })
 
 test('matrix-shape', () => {
-  expect(squareMatrixWhatever.isSquare).toBe(true);
+  const squareMatrix = getSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
+  
+  expect(squareMatrix.isSquare).toBe(true);
   expect(nonSquareMatrix.isSquare).toBe(false);
 });
 
 test('transpose-matrix', () => {
-  const squareTranspose = squareMatrixWhatever.transpose();
+  const squareMatrix = getSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
+  const squareTranspose = squareMatrix.transpose();
   const nonSquareTranspose = nonSquareMatrix.transpose();
 
   expect(nonSquareTranspose.order).toEqual('4x2');
   expect(nonSquareTranspose.entries).toEqual(nonSquareMatrixTransposeArray);
   
   expect(squareTranspose.order).toEqual('4x4');
-  expect(squareTranspose.entries).toEqual(squareMatrixWhateverTransposeArray)
+  expect(squareTranspose.entries).toEqual(squareMatrixTransposeArray)
 })
 
 test('set-col', () => {
   // nonSquareMatrix order is 2x4
   const setColSizeErrorString = 'Entries must have the same row length as the matrix';
+  const squareMatrix = getSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
   expect(() => {
     nonSquareMatrix.setCol([], 0);
   }).toThrowError(setColSizeErrorString);
@@ -88,26 +102,77 @@ test('set-col', () => {
     nonSquareMatrix.setCol([1,2,3,4,5], 0);
   }).toThrowError(setColSizeErrorString);
 
-  const nonSquareMatrixTmp = Matrix.from(nonSquareMatrix.entries);
-  console.log('Antes', nonSquareMatrixTmp)
-  const nonSquareFirstCol = nonSquareMatrixTmp.getCol(0) as number[];
-  nonSquareMatrixTmp.setCol(nonSquareFirstCol.reverse(), 0);
-  console.log('Depois', nonSquareMatrixTmp)
-  expect(nonSquareMatrixTmp.getCol(0)).toEqual(nonSquareFirstCol.reverse());
+  let index = 0;
+  const nonSquareFirstCol = nonSquareMatrix.getCol(index);
+  const nonSquareFirstColReversed = [...nonSquareFirstCol].reverse();
+  nonSquareMatrix.setCol(nonSquareFirstColReversed, index);
   
-  const squareMatrixTmp = Matrix.from(squareMatrixWhatever.entries);
-  const squareFirstCol = squareMatrixTmp.getCol(3) as number[];
-  squareMatrixTmp.setCol(squareFirstCol.reverse(), 3);
-  expect(squareMatrixTmp.getCol(3)).toEqual(squareFirstCol.reverse());
+  let matrixNewFirstCol = nonSquareMatrix.getCol(index);
+  expect(matrixNewFirstCol).toEqual(nonSquareFirstColReversed);
+
+
+  
+  index = 3;
+  const squareFourthCol = squareMatrix.getCol(index);
+  const squareFourthColReversed = [...squareFourthCol].reverse();
+  squareMatrix.setCol(squareFourthColReversed, index);
+
+  matrixNewFirstCol = squareMatrix.getCol(index);
+  expect(matrixNewFirstCol).toEqual(squareFourthColReversed);  
 })
+
+test('set-row', () => {
+  // nonSquareMatrix order is 2x4
+  const setRowSizeErrorString = 'Entries must have the same col length as the matrix';
+  const squareMatrix = getSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
+  expect(() => {
+    nonSquareMatrix.setRow([], 0);
+  }).toThrowError(setRowSizeErrorString);
+
+  expect(() => {
+    nonSquareMatrix.setRow([1,2,3,4,5], 0);
+  }).toThrowError(setRowSizeErrorString);
+
+  let index = 0;
+  const nonSquareFirstRow = nonSquareMatrix.getRow(index);
+  const nonSquareFirstRowReversed = [...nonSquareFirstRow].reverse();
+  nonSquareMatrix.setRow(nonSquareFirstRowReversed, index);
+  
+  let matrixNewFirstRow = nonSquareMatrix.getRow(index);
+  expect(matrixNewFirstRow).toEqual(nonSquareFirstRowReversed);
+
+
+  
+  index = 1;
+  const squareSecondRow = squareMatrix.getRow(index);
+  const squareSecondRowReversed = [...squareSecondRow].reverse();
+  squareMatrix.setRow(squareSecondRowReversed, index);
+
+  matrixNewFirstRow = squareMatrix.getRow(index);
+  expect(matrixNewFirstRow).toEqual(squareSecondRowReversed);  
+})
+
+test('swap-rows', () => {
+  const nonSquareMatrix = getNonSquareMatrix();
+  
+  expect(nonSquareMatrix.getRow(0)).toEqual(nonSquareMatrixArray[0]);
+  expect(nonSquareMatrix.getRow(1)).toEqual(nonSquareMatrixArray[1]);
+  
+  nonSquareMatrix.permuteRows(0,1);
+  
+  expect(nonSquareMatrix.getRow(0)).toEqual(nonSquareMatrixArray[1]);
+  expect(nonSquareMatrix.getRow(1)).toEqual(nonSquareMatrixArray[0]);
+  
+});
 
 test('inverse-matrix', () => {
   const service = getInverseMatrixService();
+  const squareMatrix = getSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
 
   expect(() => {
     const _ = service.inverse(nonSquareMatrix);
   }).toThrowError('Non-square matrices do not have an inverse.');
 
-  // const inverseMatrix = service.inverse(squareMatrixWhatever);
-  // expect(inverseMatrix.entries).toEqual(squareMatrixWhateverInverseArray);
+  //const inverseMatrix = service.inverse(squareMatrix);
+  //expect(inverseMatrix.entries).toEqual(squareMatrixWhateverInverseArray);
 })
