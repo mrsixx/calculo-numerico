@@ -1,5 +1,6 @@
 import { vector2Norm } from "../utils/math-utils";
 import { LinearSystem } from "./linear-system";
+import { Matrix } from "./matrix";
 
 abstract class LinearSystemSolver {
   protected maxOfIterations: number;
@@ -22,12 +23,10 @@ abstract class LinearSystemSolver {
       x: solutionTest[idx],
     });
 
-    // console.log({coef: system.coefficientsMatrix.entries, results: system.resultsMatrix.entries});
     const resultMatrix = system.resultsMatrix.getCol(0);
     const error = system.coefficientsMatrix.entries
       .map((equation, eqIdx) => {
         const realSolution = resultMatrix[eqIdx];
-        // console.log(equation.map(toCoefficientAndVariablePair));
         const calculationResult = equation.map(toCoefficientAndVariablePair)
                                         .map(toOperationResult)
                                         .reduce(toSumOfTerms);
@@ -42,7 +41,7 @@ abstract class LinearSystemSolver {
 
 export abstract class ExactLinearSystemSolver extends LinearSystemSolver {
   
-  abstract solve (system: LinearSystem): number[];
+  abstract solve (system: LinearSystem): Matrix;
 }
 
 export abstract class IteractiveLinearSystemSolver extends LinearSystemSolver {

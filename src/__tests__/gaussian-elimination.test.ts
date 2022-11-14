@@ -13,8 +13,7 @@ test('impossible-system', () => {
 test('integer-4-x-4-system-solve-by-gaussian-elimination', () => {
   const integer4x4System = getInteger4x4LinearSystem();
   const solutionTest = linearSystemSolver.solve(integer4x4System);
-
-  expect(linearSystemSolver.test(integer4x4System, solutionTest, 1e-16)).toBe(true);
+  expect(linearSystemSolver.test(integer4x4System, solutionTest.getCol(0) as number[], 1e-16)).toBe(true);
 });
 
 test('simple-4x4-system-test', () => { 
@@ -26,7 +25,7 @@ test('simple-4x4-system-test', () => {
 test('decimal-4x4-system-solve-by-gaussian-elimination', () => {
   const decimal4x4System = getDecimal4x4LinearSystem();
   const solutionTest = linearSystemSolver.solve(decimal4x4System);
-  expect(linearSystemSolver.test(decimal4x4System, solutionTest, 1e-6)).toBe(true);
+  expect(linearSystemSolver.test(decimal4x4System, solutionTest.getCol(0) as number[], 1e-6)).toBe(true);
 });
 
 test('decimal-4x4-system-test', () => {

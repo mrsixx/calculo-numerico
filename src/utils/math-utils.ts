@@ -1,3 +1,5 @@
+import { Matrix } from "../models/matrix";
+
 // quadratic vector
 export const quadratic = (vector: number[]): number[] => vector.map(x => Math.pow(x,2));
 // vector sum
@@ -20,3 +22,5 @@ export const rootMeanSquare = (vector: number[]): number => Math.sqrt(average(qu
 export const vector1Norm = (vector: number[]): number => sum(vector.map(x => Math.abs(x)));
 // vector euclidean norm
 export const vector2Norm = (vector: number[]): number => Math.sqrt(sum(quadratic(vector)));
+// matrix Manhattan distance 
+export const matrix1Norm = (matrix: Matrix): number => greatest(matrix.mapCols((col) => vector1Norm(col)) as number[])

@@ -1,10 +1,12 @@
 import {
-  malFormedArray, squareMatrixTransposeArray, nonSquareMatrixArray,
+  malFormedArray, squareMatrixTransposeArray, nonSquareMatrixArray, inverseSquareMatrixArray,
   nonSquareMatrixTransposeArray, nonSquareZeroArray, identity4x4Array,
-  getColMatrix, getSquareMatrix, getNonSquareMatrix, getRowMatrix 
+  getColMatrix, getNotInvertibleSquareMatrix, getSquareMatrix, getNonSquareMatrix, getRowMatrix
 } from '../utils/tests-constants/matrices';
 import { Matrix } from '../models/matrix';
 import { InverseMatrixService } from '../services/inverse-matrix-service';
+import { absoluteErrorMatrix } from '../utils/matrices-utils';
+import { matrix1Norm } from '../utils/math-utils';
 
 const getInverseMatrixService = () => new InverseMatrixService();
 
@@ -30,9 +32,9 @@ test('4x4-identity-matrix', () => {
 test('get-matrix-entry', () => {
   const squareMatrix = getSquareMatrix();
 
-  expect(squareMatrix.getEntry(2, 3)).toEqual(6);
-  expect(squareMatrix.getEntry(0, 0)).toEqual(1);
-  expect(squareMatrix.getEntry(3, 3)).toEqual(2);
+  expect(squareMatrix.getEntry(2, 2)).toEqual(9);
+  expect(squareMatrix.getEntry(0, 0)).toEqual(7);
+  expect(squareMatrix.getEntry(1, 1)).toEqual(6);
   expect(() => {
     squareMatrix.getEntry(4,0);
   }).toThrowError(`Row index '4' not available.`);
@@ -44,7 +46,7 @@ test('get-matrix-entry', () => {
 test('get-matrix-row', () => {
   const squareMatrix = getSquareMatrix();
 
-  expect(squareMatrix.getRow(2)).toEqual([9, 8, 7, 6]);
+  expect(squareMatrix.getRow(2)).toEqual([1, 2, 9]);
   expect(() => {
     squareMatrix.getRow(5);
   }).toThrowError(`Row index '5' not available.`);
@@ -53,7 +55,7 @@ test('get-matrix-row', () => {
 test('get-matrix-col', () => {
   const squareMatrix = getSquareMatrix();
   
-  expect(squareMatrix.getCol(2)).toEqual([3, 7, 7, 3]);
+  expect(squareMatrix.getCol(1)).toEqual([4, 6, 2]);
   expect(() => {
     squareMatrix.getCol(32);
   }).toThrowError(`Col index '32' not available.`);
@@ -65,7 +67,7 @@ test('get-matrix-order', () => {
   const squareMatrix = getSquareMatrix();
   const nonSquareMatrix = getNonSquareMatrix();
 
-  expect(squareMatrix.order).toEqual('4x4');
+  expect(squareMatrix.order).toEqual('3x3');
   expect(nonSquareMatrix.order).toEqual('2x4');
   expect(rowMatrix.order).toEqual('1x3');
   expect(colMatrix.order).toEqual('3x1');
@@ -86,7 +88,7 @@ test('transpose-matrix', () => {
   expect(nonSquareTranspose.order).toEqual('4x2');
   expect(nonSquareTranspose.entries).toEqual(nonSquareMatrixTransposeArray);
   
-  expect(squareTranspose.order).toEqual('4x4');
+  expect(squareTranspose.order).toEqual('3x3');
   expect(squareTranspose.entries).toEqual(squareMatrixTransposeArray)
 })
 
@@ -112,13 +114,13 @@ test('set-col', () => {
 
 
   
-  index = 3;
-  const squareFourthCol = squareMatrix.getCol(index);
-  const squareFourthColReversed = [...squareFourthCol].reverse();
-  squareMatrix.setCol(squareFourthColReversed, index);
+  index = 1;
+  const squareSecondCol = squareMatrix.getCol(index);
+  const squareSecondColReversed = [...squareSecondCol].reverse();
+  squareMatrix.setCol(squareSecondColReversed, index);
 
   matrixNewFirstCol = squareMatrix.getCol(index);
-  expect(matrixNewFirstCol).toEqual(squareFourthColReversed);  
+  expect(matrixNewFirstCol).toEqual(squareSecondColReversed);  
 })
 
 test('set-row', () => {
@@ -167,12 +169,18 @@ test('swap-rows', () => {
 
 test('inverse-matrix', () => {
   const service = getInverseMatrixService();
-  const squareMatrix = getSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
+  const squareMatrix = getSquareMatrix(), squareNotInvertibleMatrix = getNotInvertibleSquareMatrix(), nonSquareMatrix = getNonSquareMatrix();
 
   expect(() => {
     const _ = service.inverse(nonSquareMatrix);
   }).toThrowError('Non-square matrices do not have an inverse.');
 
-  //const inverseMatrix = service.inverse(squareMatrix);
-  //expect(inverseMatrix.entries).toEqual(squareMatrixWhateverInverseArray);
+  expect(() => {
+    const _ = service.inverse(squareNotInvertibleMatrix);
+  }).toThrowError('Matrices with null determinants do not have an inverse.');
+
+  const inverseMatrix = service.inverse(squareMatrix);
+
+  const inverseOperationError = matrix1Norm(absoluteErrorMatrix(Matrix.from(inverseSquareMatrixArray), inverseMatrix));
+  expect(inverseOperationError).toBeLessThanOrEqual(1e-16);
 })

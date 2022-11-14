@@ -22,16 +22,15 @@ export class LinearSystem {
   }
 
   print(): void {
-    this.expandedMatrix.forEachRow(row => {
-      const coeficientes = row.slice(0, row.length - 1);
-      const resultado = row[row.length - 1];
+    const operations = this.expandedMatrix.mapRows(row => {
+      const coeficientes = row.slice(0, this.coefficientsMatrix.cols - 1);
+      const resultado = row.slice(-1*this.resultsMatrix.cols);
 
-      const str = coeficientes
+       return [...resultado.map(res => coeficientes
         .map((coef, idx) => `${printCoefficient(coef)}*X${idx + 1}`)
         .join(' + ')
-        .concat(` = ${resultado.toLocaleString()}`);
-
-      console.log(str);
-    });
+        .concat(` = ${res.toLocaleString()}`))];
+      });
+      console.log(operations);
   }
 }

@@ -1,3 +1,5 @@
+import { scalingByGaussianElimination } from "../utils/matrices-utils";
+
 const toRowLengthArray = (row: number[]): number => row.length;
 const rowWithSizeOtherThan = (size: number) => {
   return (length: number): boolean => length !== size;
@@ -91,6 +93,10 @@ export class Matrix {
   mapRows(callbackFn: (row: number[], index: number, array: number[][]) => unknown, thisArg?: any) : unknown[] {
     return this._entries.map(callbackFn, thisArg);
   }
+  
+  mapCols(callbackFn: (col: number[], index: number, array: number[][]) => unknown, thisArg?: any) : unknown[] {
+    return this.transpose()._entries.map(callbackFn, thisArg);
+  }
 
   forEachRow(callbackFn: (row: number[], index: number, array: number[][]) => void, thisArg?: any) : void {
     this._entries.forEach(callbackFn, thisArg)
@@ -122,6 +128,18 @@ export class Matrix {
     this.setRow(rowA, indexRowB);
   }
 
+  determinant() : number {  
+    if(!this.isSquare)
+      throw new Error('Non-square matrices do not have a determinant.');
+    
+    const { scaledMatrix, permutations } = scalingByGaussianElimination(this);
+    let prod = 1;
+    for(let i = 0; i < this.rows; i++)
+      prod *= scaledMatrix.getEntry(i,i);
+
+    return Math.pow(-1, permutations) * prod;
+  }
+
 
   print() : void {
     console.log(this._entries.map(row => row.join(' ')).join('\n'));
@@ -137,7 +155,6 @@ export class Matrix {
     const zeroMatrix: number[][] = [];
 
     for(let i = 0; i < rows; i++) {
-      // const row = new Array(cols).fill(0);
       const row: number[] = [];
       for(let j = 0; j < cols; j++)
         row.push(0);
