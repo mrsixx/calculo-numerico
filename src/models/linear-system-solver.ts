@@ -3,11 +3,6 @@ import { LinearSystem } from "./linear-system";
 import { Matrix } from "./matrix";
 
 abstract class LinearSystemSolver {
-  protected maxOfIterations: number;
-  
-  constructor() {
-    this.maxOfIterations = 1000;
-  }
   /**
    * Tests whether a solution satisfies the given linear system
    * @param system Linear system under test
@@ -45,6 +40,12 @@ export abstract class ExactLinearSystemSolver extends LinearSystemSolver {
 }
 
 export abstract class IteractiveLinearSystemSolver extends LinearSystemSolver {
+  protected maxOfIterations: number;
+  
+  constructor() {
+    super();
+    this.maxOfIterations = 1000;
+  }
 
-  abstract solve (system: LinearSystem, initialPoint: number[], desiredPrecision: number): number[];
+  abstract solve (system: LinearSystem, initialPoint: Matrix, desiredPrecision: number): Matrix;
 }

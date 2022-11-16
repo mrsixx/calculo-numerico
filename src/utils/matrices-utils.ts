@@ -56,7 +56,7 @@ export function isSquareMatrix(matrix: number[][]) : boolean {
 }
 
 
-export function absoluteErrorMatrix(realMatrix: Matrix, calculatedMatrix: Matrix) {
+export function absoluteErrorMatrix(realMatrix: Matrix, calculatedMatrix: Matrix) : Matrix {
   if(realMatrix.order !== calculatedMatrix.order)
     throw new Error('Matrices must be of the same order.');
 
