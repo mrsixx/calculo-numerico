@@ -14,7 +14,7 @@ export class JacobiMethodService extends IteractiveLinearSystemSolver {
     const point = Matrix.from(initialPoint.entries);
     for(let k = 0; matrix1Norm(absoluteErrorMatrix(point, initialPoint)) <= desiredPrecision && k < this.maxOfIterations; k++){
       const xk = point.getCol(0) as number[];
-      console.log({get: xk});
+
       for(let i = 0; i < point.rows; i++)
       {
         let sum = 0; 
@@ -30,7 +30,6 @@ export class JacobiMethodService extends IteractiveLinearSystemSolver {
       }
 
       point.setCol(xk, 0);
-      console.log({set: xk});
     }
     return point;
   }

@@ -25,8 +25,8 @@ const decimal4x4CoefsMatrix = Matrix.from([
 const decimal4x4ResultsMatrix = Matrix.from([[16.4, -49.7, -80.8, -106.3]]).transpose();
 
 
-export const integer4x4Solution = [-1, 2, -1, 0];
-export const decimal4x4Solution = [1, 2, -1, 1];
+export const integer4x4Solution = Matrix.from([[-1, 2, -1, 0]]).transpose();
+export const decimal4x4Solution = Matrix.from([[1, 2, -1, 1]]).transpose();
 
 export const getIndeterminateLinearSystem = () => new LinearSystem(indeterminateLinearSystemCoefsMatrix, Matrix.zero(4,1))
 export const getInteger4x4LinearSystem = () => new LinearSystem(integer4x4CoefsMatrix, integer4x4ResultsMatrix);

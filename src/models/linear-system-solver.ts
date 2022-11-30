@@ -10,12 +10,13 @@ abstract class LinearSystemSolver {
    * @param desiredPrecision Desired decimal precision, e.g: 1e-6
    * @returns True if Euclidean norm of the absolute error of the solution array is less than the desired precision
    */
-  test(system: LinearSystem, solutionTest: number[], desiredPrecision: number): boolean {
+  test(system: LinearSystem, solutionTest: Matrix, desiredPrecision: number): boolean {
+    const solutionTestColumn = solutionTest.getCol(0);
     const toSumOfTerms = (term1: number, term2: number) => term1 + term2;
     const toOperationResult = ({ a, x }: { a: number; x: number }) => a * x;
     const toCoefficientAndVariablePair = (coef: number, idx: number) => ({
       a: coef,
-      x: solutionTest[idx],
+      x: solutionTestColumn[idx],
     });
 
     const resultMatrix = system.resultsMatrix.getCol(0);
@@ -28,6 +29,7 @@ abstract class LinearSystemSolver {
         const absoluteError = Math.abs(realSolution - calculationResult);
         return absoluteError;
       });
+
       const errorNorm = vector2Norm(error);
       return  errorNorm <= desiredPrecision;
   }

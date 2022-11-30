@@ -4,8 +4,8 @@ import { getInteger4x4LinearSystem } from '../utils/tests-constants/linear-syste
 
 const linearSystemSolver = new JacobiMethodService();
 
-test('blank-test', () => {
+test('jacobi-method-iteraction', () => {
   const integer4x4System = getInteger4x4LinearSystem();
-  linearSystemSolver.solve(integer4x4System, Matrix.zero(4,1), 10e-16);
-  expect(true).toBe(true);
+  const solution = linearSystemSolver.solve(integer4x4System, Matrix.zero(4,1), 10e-16);
+  expect(linearSystemSolver.test(integer4x4System, solution, 10e-16)).toBe(true);
 });
