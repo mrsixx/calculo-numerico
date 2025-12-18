@@ -32,6 +32,7 @@ export class GaussianEliminationService extends ExactLinearSystemSolver {
           solution.setEntry(k, s, entry);
       }
     }
+    //TODO: reorder rows of solution after pivoting
     return solution;
   }
 }
